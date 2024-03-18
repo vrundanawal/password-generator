@@ -9,10 +9,20 @@ function App() {
   //useRef() hook
   const passwordRef = useRef(null);
 
+  //reference for document link : setSelectionRange
+  //https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
   //copy password to clipboard
-  const copyPasswordToClipBoard = () => {
+  const copyPasswordToClipBoard = useCallback(() => {
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0, 12);//always copied 12 characters, we can modify as well
+    window.navigator.clipboard.writeText(password);
+   
+    //get the copiedtext with range and output in console
+    let copiedText = window.getSelection().toString();
+    alert('Text copied to clipboard successfully!  ' + copiedText)
+    console.log(copiedText);
 
-  }
+  }, [password])
 
   //password generator
   const passwordGenerator = useCallback(() => {
@@ -42,7 +52,7 @@ function App() {
     length,
     numberAllowed,
     charAllowed,
-    passwordGenerator,
+    passwordGenerator
   ]);
   return (
     <>
@@ -70,7 +80,7 @@ function App() {
             <input
               type="range"
               min={6}
-              max={100}
+              max={50}
               value={length}
               className="cursor-pointer"
               onChange={(e) => setLength(e.target.value)}
@@ -96,7 +106,7 @@ function App() {
               defaultChecked={charAllowed}
               id="characterInput"
               onChange={() => {
-                setNumberAllowed((prev) => !prev);
+                setCharAllowed((prev) => !prev);
               }}
             />
             <label htmlFor="characterInput">Characters</label>
